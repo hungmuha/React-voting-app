@@ -1,17 +1,42 @@
 class ProductList extends React.Component{
+	//ProductList is the parent component
 	constructor(props){
+		//although we don't supply the component with any props
+		// use super props and constructor(props) as default because it is just a good habit
 		super(props);
 
 		this.state = {
 			products:[],
-		};	
+		};
+		//the only way to set state like above is in constructor
+		this.handleProductUpVote= this.handleProductUpVote.bind(this);
 	}
+
 	componentDidMount() {
+		//one lifecycle method componentDidMount
 		this.setState({ products: Seed.products});
+		//never modify state outside of this.setState()
+
 	}
+
 	handleProductUpVote(productId) {
 		console.log(productId+ ' was upvoted.');
-	}
+		const nextProducts = this.state.products.map((product)=>{
+			if(product.id === productId) {
+				//use Object.assign to create a copy of products to prevent mutating the state.product
+				return Object.assign({},product,{
+						votes: product.votes+1,
+				});
+			} else{
+				return product;
+			}
+		});
+
+		this.setState({
+			products: nextProducts,
+		});
+}
+
 	render(){
 		const products = this.state.products.sort((a,b)=>(
 			b.votes - a.votes
@@ -40,13 +65,16 @@ class ProductList extends React.Component{
 
 class Product extends React.Component {
 	constructor(props) {
+		
 		super(props);
-
+		//super(props) to supply the component with prop 
+		// need to use constructor to mount custom method to the component otherwise the method is empty
 		this.handleUpVote = this.handleUpVote.bind(this);
 	}
 
 	handleUpVote() {
 		this.props.onVote(this.props.id);
+		//this in this method is not enought to mount the method to component, need to be declared in constructor
 	}
 
 	render() {
