@@ -9,17 +9,17 @@ class ProductList extends React.Component{
 			products:[],
 		};
 		//the only way to set state like above is in constructor
-		this.handleProductUpVote= this.handleProductUpVote.bind(this);
 	}
 
 	componentDidMount() {
 		//one lifecycle method componentDidMount
 		this.setState({ products: Seed.products});
 		//never modify state outside of this.setState()
+		//treat state as immutable outside of setState
 
 	}
 
-	handleProductUpVote(productId) {
+	handleProductUpVote = (productId) => {
 		console.log(productId+ ' was upvoted.');
 		const nextProducts = this.state.products.map((product)=>{
 			if(product.id === productId) {
@@ -34,10 +34,12 @@ class ProductList extends React.Component{
 
 		this.setState({
 			products: nextProducts,
+			//products being updated by nextProducts following the rule of only change state inside setState
 		});
 }
 
 	render(){
+		//use JSX inside render method only
 		const products = this.state.products.sort((a,b)=>(
 			b.votes - a.votes
 		));
@@ -69,10 +71,11 @@ class Product extends React.Component {
 		super(props);
 		//super(props) to supply the component with prop 
 		// need to use constructor to mount custom method to the component otherwise the method is empty
-		this.handleUpVote = this.handleUpVote.bind(this);
+		// this.handleUpVote = this.handleUpVote.bind(this);
 	}
 
-	handleUpVote() {
+	handleUpVote=()=> {
+		//with transform-class-properties plugin we don't have to manual bind the method in construction, we use arrow function instead
 		this.props.onVote(this.props.id);
 		//this in this method is not enought to mount the method to component, need to be declared in constructor
 	}
